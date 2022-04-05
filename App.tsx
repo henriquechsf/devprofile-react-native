@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { ThemeProvider } from 'styled-components';
-import { Home } from './src/screens/Home';
 import theme from './src/global/styles/theme';
 import {
   useFonts,
@@ -8,6 +7,11 @@ import {
   Roboto_700Bold,
 } from '@expo-google-fonts/roboto';
 import AppLoading from 'expo-app-loading';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Routes } from './src/routes';
+
+const Stack = createStackNavigator();
 
 const App: FC = () => {
   const [fontsLoaded] = useFonts({
@@ -20,9 +24,11 @@ const App: FC = () => {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Home />
-    </ThemeProvider>
+    <NavigationContainer>
+      <ThemeProvider theme={theme}>
+        <Routes />
+      </ThemeProvider>
+    </NavigationContainer>
   );
 };
 
