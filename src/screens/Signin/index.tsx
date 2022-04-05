@@ -2,7 +2,14 @@ import React, { FC } from 'react';
 import { ScrollView } from 'react-native';
 import { Input } from '../../components/Form/Input';
 import { Button } from '../../components/Form/Button';
-import { Container, Content, Logo, Title } from './styles';
+import {
+  Container,
+  Content,
+  ForgotPasswordButton,
+  ForgotPasswordTitle,
+  Logo,
+  Title,
+} from './styles';
 import logo from '../../assets/logo.png';
 
 export const SignIn: FC = () => {
@@ -21,6 +28,10 @@ export const SignIn: FC = () => {
           <Input placeholder="Senha" />
 
           <Button title="Entrar" />
+
+          <ForgotPasswordButton>
+            <ForgotPasswordTitle>Esqueci minha senha</ForgotPasswordTitle>
+          </ForgotPasswordButton>
         </Content>
       </Container>
     </ScrollView>
