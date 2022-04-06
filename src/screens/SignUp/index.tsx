@@ -13,13 +13,30 @@ import {
 } from './styles';
 import logo from '../../assets/logo.png';
 import { useNavigation } from '@react-navigation/native';
+import { useForm, FieldValues } from 'react-hook-form';
+import { InputControl } from '../../components/Form/InputControl';
 
 interface ScreenNavigationProp {
   goBack: () => void;
 }
 
+interface IFormInputs {
+  [name: string]: any;
+}
+
 export const SignUp: FC = () => {
+  const { handleSubmit, control } = useForm<FieldValues>();
   const { goBack } = useNavigation<ScreenNavigationProp>();
+
+  const handleSignUp = (form: IFormInputs) => {
+    const data = {
+      name: form.name,
+      email: form.email,
+      password: form.password,
+    };
+
+    console.log(data);
+  };
 
   return (
     <KeyboardAvoidingView
@@ -35,11 +52,32 @@ export const SignUp: FC = () => {
           <Content>
             <Logo source={logo} />
             <Title>Crie sua conta</Title>
-            <Input placeholder="Nome completo" />
-            <Input placeholder="Senha" />
-            <Input placeholder="Senha" />
 
-            <Button title="Criar conta" />
+            <InputControl
+              placeholder="Nome completo"
+              control={control}
+              name="name"
+              autoCapitalize="words"
+              autoCorrect={false}
+            />
+            <InputControl
+              placeholder="E-mail"
+              control={control}
+              name="email"
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="email-address"
+            />
+            <InputControl
+              placeholder="Senha"
+              control={control}
+              name="password"
+              autoCapitalize="none"
+              autoCorrect={false}
+              secureTextEntry
+            />
+
+            <Button title="Criar conta" onPress={handleSubmit(handleSignUp)} />
           </Content>
         </Container>
       </ScrollView>

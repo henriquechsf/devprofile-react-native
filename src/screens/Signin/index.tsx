@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
-import { Input } from '../../components/Form/Input';
 import { Button } from '../../components/Form/Button';
 import {
   Container,
@@ -15,13 +14,30 @@ import {
 } from './styles';
 import logo from '../../assets/logo.png';
 import { useNavigation } from '@react-navigation/native';
+import { useForm, FieldValues } from 'react-hook-form';
+import { InputControl } from '../../components/Form/InputControl';
 
 interface ScreenNavigationProp {
   navigate: (screen: string) => void;
 }
 
+interface IFormInputs {
+  [name: string]: any;
+}
+
 export const SignIn: FC = () => {
+  const { handleSubmit, control } = useForm<FieldValues>();
+
   const { navigate } = useNavigation<ScreenNavigationProp>();
+
+  const handleSignIn = (form: IFormInputs) => {
+    const data = {
+      email: form.email,
+      password: form.password,
+    };
+
+    console.log(data);
+  };
 
   return (
     <KeyboardAvoidingView
@@ -41,10 +57,24 @@ export const SignIn: FC = () => {
               <Title>Faça seu login</Title>
             </View>
 
-            <Input placeholder="E-mail" />
-            <Input placeholder="Senha" />
+            <InputControl
+              placeholder="E-mail"
+              control={control}
+              name="email"
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="email-address"
+            />
+            <InputControl
+              placeholder="Senha"
+              control={control}
+              name="password"
+              autoCapitalize="none"
+              autoCorrect={false}
+              secureTextEntry
+            />
 
-            <Button title="Entrar" />
+            <Button title="Entrar" onPress={handleSubmit(handleSignIn)} />
 
             <ForgotPasswordButton>
               <ForgotPasswordTitle>Esqueci minha senha</ForgotPasswordTitle>
