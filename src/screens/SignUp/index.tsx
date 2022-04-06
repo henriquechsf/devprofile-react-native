@@ -46,7 +46,7 @@ export const SignUp: FC = () => {
 
       <BackToSignIn onPress={() => goBack()}>
         <Icon name="arrow-left" />
-        <BackToSignInTitle>Criar uma conta</BackToSignInTitle>
+        <BackToSignInTitle>Voltar para login</BackToSignInTitle>
       </BackToSignIn>
     </KeyboardAvoidingView>
   );
