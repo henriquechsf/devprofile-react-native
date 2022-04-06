@@ -14,8 +14,15 @@ import {
   Title,
 } from './styles';
 import logo from '../../assets/logo.png';
+import { useNavigation } from '@react-navigation/native';
+
+interface ScreenNavigationProp {
+  navigate: (screen: string) => void;
+}
 
 export const SignIn: FC = () => {
+  const { navigate } = useNavigation<ScreenNavigationProp>();
+
   return (
     <KeyboardAvoidingView
       enabled
@@ -46,7 +53,7 @@ export const SignIn: FC = () => {
         </Container>
       </ScrollView>
 
-      <CreateAccount>
+      <CreateAccount onPress={() => navigate('SignUp')}>
         <Icon name="log-in" />
         <CreateAccountTitle>Criar uma conta</CreateAccountTitle>
       </CreateAccount>
