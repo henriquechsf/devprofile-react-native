@@ -15,6 +15,8 @@ import logo from '../../assets/logo.png';
 import { useNavigation } from '@react-navigation/native';
 import { useForm, FieldValues } from 'react-hook-form';
 import { InputControl } from '../../components/Form/InputControl';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 interface ScreenNavigationProp {
   goBack: () => void;
@@ -24,8 +26,18 @@ interface IFormInputs {
   [name: string]: any;
 }
 
+const formSchema = yup.object({
+  name: yup.string().required('Informe o nome completo'),
+  email: yup.string().email('E-mail inválido').required('Informe o e-mail'),
+  password: yup.string().required('Informe a senha'),
+});
+
 export const SignUp: FC = () => {
-  const { handleSubmit, control } = useForm<FieldValues>();
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<FieldValues>({ resolver: yupResolver(formSchema) });
   const { goBack } = useNavigation<ScreenNavigationProp>();
 
   const handleSignUp = (form: IFormInputs) => {
@@ -59,6 +71,7 @@ export const SignUp: FC = () => {
               name="name"
               autoCapitalize="words"
               autoCorrect={false}
+              error={errors.name && errors.name.message}
             />
             <InputControl
               placeholder="E-mail"
@@ -67,6 +80,7 @@ export const SignUp: FC = () => {
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="email-address"
+              error={errors.email && errors.email.message}
             />
             <InputControl
               placeholder="Senha"
@@ -75,6 +89,7 @@ export const SignUp: FC = () => {
               autoCapitalize="none"
               autoCorrect={false}
               secureTextEntry
+              error={errors.password && errors.password.message}
             />
 
             <Button title="Criar conta" onPress={handleSubmit(handleSignUp)} />
