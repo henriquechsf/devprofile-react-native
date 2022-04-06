@@ -45,6 +45,7 @@ export const SignIn: FC = () => {
           </Content>
         </Container>
       </ScrollView>
+
       <CreateAccount>
         <Icon name="log-in" />
         <CreateAccountTitle>Criar uma conta</CreateAccountTitle>

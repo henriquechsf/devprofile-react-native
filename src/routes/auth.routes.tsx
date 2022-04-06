@@ -8,7 +8,7 @@ const Auth = createStackNavigator();
 export const AuthRoutes: FC = () => {
   return (
     <Auth.Navigator
-      initialRouteName="SignIn"
+      initialRouteName="SignUp"
       screenOptions={{ headerShown: false }}
     >
       <Auth.Screen name="SignIn" component={SignIn} />
