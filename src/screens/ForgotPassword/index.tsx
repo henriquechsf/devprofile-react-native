@@ -1,19 +1,16 @@
-import React, { FC } from 'react';
+import React from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  View,
 } from 'react-native';
 import { Button } from '../../components/Form/Button';
 import {
+  BackToSignIn,
+  BackToSignInTitle,
   Container,
   Content,
-  CreateAccount,
-  CreateAccountTitle,
-  ForgotPasswordButton,
-  ForgotPasswordTitle,
   Icon,
   Logo,
   Title,
@@ -24,10 +21,11 @@ import { useForm, FieldValues } from 'react-hook-form';
 import { InputControl } from '../../components/Form/InputControl';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useAuth } from '../../context/AuthContext';
+import { api } from '../../services/api';
 
 interface ScreenNavigationProp {
-  navigate: (screen: string) => void;
+  goBack(): void;
+  navigate(screen: string): void;
 }
 
 interface IFormInputs {
@@ -36,35 +34,35 @@ interface IFormInputs {
 
 const formSchema = yup.object({
   email: yup.string().email('E-mail inválido').required('Informe o e-mail'),
-  password: yup.string().required('Informe a senha'),
 });
 
-export const SignIn: FC = () => {
-  const { signIn } = useAuth();
-
-  const [loading, setLoading] = React.useState(false);
-
+export const ForgotPassword: React.FC = () => {
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<FieldValues>({ resolver: yupResolver(formSchema) });
 
-  const { navigate } = useNavigation<ScreenNavigationProp>();
+  const { goBack, navigate } = useNavigation<ScreenNavigationProp>();
 
-  const handleSignIn = (form: IFormInputs) => {
+  const handleForgotPassword = async (form: IFormInputs) => {
     const data = {
       email: form.email,
-      password: form.password,
     };
 
     try {
-      setLoading(true);
-      signIn(data);
+      await api.post('password/forgot', data);
+
+      Alert.alert(
+        'E-mail enviado',
+        'Você receberá um e-mail com as instruções para redefinição de senha.',
+      );
+
+      navigate('SignIn');
     } catch (error) {
       Alert.alert(
-        'Erro na autenticação',
-        'Ocorreu um erro ao fazer o login, verifique as credenciais.',
+        'Erro no envio de e-mail',
+        'Ocorreu um erro ao enviar o e-mail. Tente novamente.',
       );
     }
   };
@@ -82,10 +80,7 @@ export const SignIn: FC = () => {
         <Container>
           <Content>
             <Logo source={logo} />
-
-            <View>
-              <Title>Faça seu login</Title>
-            </View>
+            <Title>Esqueci minha senha</Title>
 
             <InputControl
               placeholder="E-mail"
@@ -96,33 +91,19 @@ export const SignIn: FC = () => {
               keyboardType="email-address"
               error={errors.email && errors.email.message}
             />
-            <InputControl
-              placeholder="Senha"
-              control={control}
-              name="password"
-              autoCapitalize="none"
-              autoCorrect={false}
-              secureTextEntry
-              error={errors.password && errors.password.message}
-            />
 
             <Button
-              title="Entrar"
-              onPress={handleSubmit(handleSignIn)}
-              disabled={loading || errors.email || errors.password}
+              title="Criar conta"
+              onPress={handleSubmit(handleForgotPassword)}
             />
-
-            <ForgotPasswordButton onPress={() => navigate('ForgotPassword')}>
-              <ForgotPasswordTitle>Esqueci minha senha</ForgotPasswordTitle>
-            </ForgotPasswordButton>
           </Content>
         </Container>
       </ScrollView>
 
-      <CreateAccount onPress={() => navigate('SignUp')}>
-        <Icon name="log-in" />
-        <CreateAccountTitle>Criar uma conta</CreateAccountTitle>
-      </CreateAccount>
+      <BackToSignIn onPress={() => goBack()}>
+        <Icon name="arrow-left" />
+        <BackToSignInTitle>Voltar para login</BackToSignInTitle>
+      </BackToSignIn>
     </KeyboardAvoidingView>
   );
 };
