@@ -24,7 +24,7 @@ import * as yup from 'yup';
 import { api } from '../../services/api';
 
 interface ScreenNavigationProp {
-  goBack(): void;
+  goBack: () => void;
   navigate(screen: string): void;
 }
 
@@ -33,36 +33,41 @@ interface IFormInputs {
 }
 
 const formSchema = yup.object({
-  email: yup.string().email('E-mail inválido').required('Informe o e-mail'),
+  token: yup.string().uuid('Código inválido').required('Informe o código'),
+  password: yup.string().required('Informe a nova senha.'),
+  password_confirmation: yup
+    .string()
+    .oneOf([yup.ref('password'), null, 'Confirmação incorreta.']),
 });
 
-export const ForgotPassword: React.FC = () => {
+export const ResetPassword: React.FC = () => {
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<FieldValues>({ resolver: yupResolver(formSchema) });
-
   const { goBack, navigate } = useNavigation<ScreenNavigationProp>();
 
-  const handleForgotPassword = async (form: IFormInputs) => {
+  const handleResetPassword = async (form: IFormInputs) => {
     const data = {
-      email: form.email,
+      token: form.token,
+      password: form.password,
+      password_confirmation: form.password_confirmation,
     };
 
     try {
-      await api.post('password/forgot', data);
+      await api.post('password/reset', data);
 
       Alert.alert(
-        'E-mail enviado',
-        'Você receberá um e-mail com as instruções para redefinição de senha.',
+        'Senha redefinida',
+        'A senha foi redefinida com sucesso. Efetue o login para acessar.',
       );
 
-      navigate('ResetPassword');
+      navigate('SignIn');
     } catch (error) {
       Alert.alert(
-        'Erro no envio de e-mail',
-        'Ocorreu um erro ao enviar o e-mail. Tente novamente.',
+        'Erro ao resetar senha',
+        'Ocorreu um erro ao resetar sua senha. Tente novamente.',
       );
     }
   };
@@ -80,21 +85,41 @@ export const ForgotPassword: React.FC = () => {
         <Container>
           <Content>
             <Logo source={logo} />
-            <Title>Esqueci minha senha</Title>
+            <Title>Redefinir a senha</Title>
 
             <InputControl
-              placeholder="E-mail"
+              placeholder="Código"
               control={control}
-              name="email"
+              name="token"
+              autoCapitalize="words"
+              autoCorrect={false}
+              error={errors.token && errors.token.message}
+            />
+            <InputControl
+              placeholder="Senha"
+              control={control}
+              name="password"
               autoCapitalize="none"
               autoCorrect={false}
-              keyboardType="email-address"
-              error={errors.email && errors.email.message}
+              secureTextEntry
+              error={errors.password && errors.password.message}
+            />
+            <InputControl
+              placeholder="Senha"
+              control={control}
+              name="password_confirmation"
+              autoCapitalize="none"
+              autoCorrect={false}
+              secureTextEntry
+              error={
+                errors.password_confirmation &&
+                errors.password_confirmation.message
+              }
             />
 
             <Button
-              title="Enviar"
-              onPress={handleSubmit(handleForgotPassword)}
+              title="Criar conta"
+              onPress={handleSubmit(handleResetPassword)}
             />
           </Content>
         </Container>
