@@ -10,6 +10,7 @@ import AppLoading from 'expo-app-loading';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Routes } from './src/routes';
+import { AuthContext, AuthProvider } from './src/context/AuthContext';
 
 const Stack = createStackNavigator();
 
@@ -26,7 +27,9 @@ const App: FC = () => {
   return (
     <NavigationContainer>
       <ThemeProvider theme={theme}>
-        <Routes />
+        <AuthProvider>
+          <Routes />
+        </AuthProvider>
       </ThemeProvider>
     </NavigationContainer>
   );
