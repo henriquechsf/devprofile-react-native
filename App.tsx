@@ -8,11 +8,9 @@ import {
 } from '@expo-google-fonts/roboto';
 import AppLoading from 'expo-app-loading';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { Routes } from './src/routes';
-import { AuthContext, AuthProvider } from './src/context/AuthContext';
-
-const Stack = createStackNavigator();
+import { AuthProvider } from './src/context/AuthContext';
+import { StatusBar } from 'react-native';
 
 const App: FC = () => {
   const [fontsLoaded] = useFonts({
@@ -26,6 +24,7 @@ const App: FC = () => {
 
   return (
     <NavigationContainer>
+      <StatusBar backgroundColor="transparent" translucent />
       <ThemeProvider theme={theme}>
         <AuthProvider>
           <Routes />
