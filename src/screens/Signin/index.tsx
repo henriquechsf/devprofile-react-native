@@ -1,5 +1,11 @@
 import React, { FC } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  View,
+} from 'react-native';
 import { Button } from '../../components/Form/Button';
 import {
   Container,
@@ -18,6 +24,7 @@ import { useForm, FieldValues } from 'react-hook-form';
 import { InputControl } from '../../components/Form/InputControl';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { useAuth } from '../../context/AuthContext';
 
 interface ScreenNavigationProp {
   navigate: (screen: string) => void;
@@ -33,6 +40,10 @@ const formSchema = yup.object({
 });
 
 export const SignIn: FC = () => {
+  const { signIn } = useAuth();
+
+  const [loading, setLoading] = React.useState(false);
+
   const {
     handleSubmit,
     control,
@@ -47,7 +58,15 @@ export const SignIn: FC = () => {
       password: form.password,
     };
 
-    console.log(data);
+    try {
+      setLoading(true);
+      signIn(data);
+    } catch (error) {
+      Alert.alert(
+        'Erro na autenticação',
+        'Ocorreu um erro ao fazer o login, verifique as credenciais.',
+      );
+    }
   };
 
   return (
@@ -87,9 +106,13 @@ export const SignIn: FC = () => {
               error={errors.password && errors.password.message}
             />
 
-            <Button title="Entrar" onPress={handleSubmit(handleSignIn)} />
+            <Button
+              title="Entrar"
+              onPress={handleSubmit(handleSignIn)}
+              disabled={loading || errors.email || errors.password}
+            />
 
-            <ForgotPasswordButton>
+            <ForgotPasswordButton onPress={() => navigate('ForgotPassword')}>
               <ForgotPasswordTitle>Esqueci minha senha</ForgotPasswordTitle>
             </ForgotPasswordButton>
           </Content>

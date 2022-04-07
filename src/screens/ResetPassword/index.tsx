@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -25,6 +25,7 @@ import { api } from '../../services/api';
 
 interface ScreenNavigationProp {
   goBack: () => void;
+  navigate(screen: string): void;
 }
 
 interface IFormInputs {
@@ -32,37 +33,41 @@ interface IFormInputs {
 }
 
 const formSchema = yup.object({
-  name: yup.string().required('Informe o nome completo'),
-  email: yup.string().email('E-mail inválido').required('Informe o e-mail'),
-  password: yup.string().required('Informe a senha'),
+  token: yup.string().uuid('Código inválido').required('Informe o código'),
+  password: yup.string().required('Informe a nova senha.'),
+  password_confirmation: yup
+    .string()
+    .oneOf([yup.ref('password'), null, 'Confirmação incorreta.']),
 });
 
-export const SignUp: FC = () => {
+export const ResetPassword: React.FC = () => {
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<FieldValues>({ resolver: yupResolver(formSchema) });
-  const { goBack } = useNavigation<ScreenNavigationProp>();
+  const { goBack, navigate } = useNavigation<ScreenNavigationProp>();
 
-  const handleSignUp = async (form: IFormInputs) => {
+  const handleResetPassword = async (form: IFormInputs) => {
     const data = {
-      name: form.name,
-      email: form.email,
+      token: form.token,
       password: form.password,
+      password_confirmation: form.password_confirmation,
     };
 
     try {
-      await api.post('users', data);
+      await api.post('password/reset', data);
 
       Alert.alert(
-        'Cadastro realizado',
-        'Você já pode fazer login na aplicação.',
+        'Senha redefinida',
+        'A senha foi redefinida com sucesso. Efetue o login para acessar.',
       );
+
+      navigate('SignIn');
     } catch (error) {
       Alert.alert(
-        'Erro no cadastro',
-        'Ocorreu um erro ao fazer o cadastro. Tente novamente.',
+        'Erro ao resetar senha',
+        'Ocorreu um erro ao resetar sua senha. Tente novamente.',
       );
     }
   };
@@ -80,24 +85,15 @@ export const SignUp: FC = () => {
         <Container>
           <Content>
             <Logo source={logo} />
-            <Title>Crie sua conta</Title>
+            <Title>Redefinir a senha</Title>
 
             <InputControl
-              placeholder="Nome completo"
+              placeholder="Código"
               control={control}
-              name="name"
+              name="token"
               autoCapitalize="words"
               autoCorrect={false}
-              error={errors.name && errors.name.message}
-            />
-            <InputControl
-              placeholder="E-mail"
-              control={control}
-              name="email"
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="email-address"
-              error={errors.email && errors.email.message}
+              error={errors.token && errors.token.message}
             />
             <InputControl
               placeholder="Senha"
@@ -108,8 +104,23 @@ export const SignUp: FC = () => {
               secureTextEntry
               error={errors.password && errors.password.message}
             />
+            <InputControl
+              placeholder="Senha"
+              control={control}
+              name="password_confirmation"
+              autoCapitalize="none"
+              autoCorrect={false}
+              secureTextEntry
+              error={
+                errors.password_confirmation &&
+                errors.password_confirmation.message
+              }
+            />
 
-            <Button title="Criar conta" onPress={handleSubmit(handleSignUp)} />
+            <Button
+              title="Criar conta"
+              onPress={handleSubmit(handleResetPassword)}
+            />
           </Content>
         </Container>
       </ScrollView>
