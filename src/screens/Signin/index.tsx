@@ -24,7 +24,7 @@ import { useForm, FieldValues } from 'react-hook-form';
 import { InputControl } from '../../components/Form/InputControl';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { AuthContext } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 interface ScreenNavigationProp {
   navigate: (screen: string) => void;
@@ -40,7 +40,7 @@ const formSchema = yup.object({
 });
 
 export const SignIn: FC = () => {
-  const { signIn } = React.useContext(AuthContext);
+  const { signIn } = useAuth();
 
   const [loading, setLoading] = React.useState(false);
 
