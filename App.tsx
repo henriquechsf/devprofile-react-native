@@ -11,6 +11,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Routes } from './src/routes';
 import { AuthProvider } from './src/context/AuthContext';
 import { StatusBar } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const App: FC = () => {
   const [fontsLoaded] = useFonts({

@@ -109,7 +109,7 @@ export const SignIn: FC = () => {
             <Button
               title="Entrar"
               onPress={handleSubmit(handleSignIn)}
-              disabled={loading || errors.email || errors.password}
+              // disabled={loading || errors.email || errors.password}
             />
 
             <ForgotPasswordButton onPress={() => navigate('ForgotPassword')}>
