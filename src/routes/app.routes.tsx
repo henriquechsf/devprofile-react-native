@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Home } from '../screens/Home';
 import { UserDetails } from '../screens/UserDetails';
+import { UserProfile } from '../screens/UserProfile';
 
 const App = createStackNavigator();
 
@@ -13,6 +14,7 @@ export const AppRoutes: FC = () => {
     >
       <App.Screen name="Home" component={Home} />
       <App.Screen name="UserDetails" component={UserDetails} />
+      <App.Screen name="UserProfile" component={UserProfile} />
     </App.Navigator>
   );
 };
