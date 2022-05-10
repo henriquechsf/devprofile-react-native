@@ -39,7 +39,7 @@ const formSchema = yup.object({
 });
 
 export const UserProfileEdit: React.FC = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
 
   const {
     handleSubmit,
@@ -62,7 +62,9 @@ export const UserProfileEdit: React.FC = () => {
     };
 
     try {
-      await api.put('profile', data);
+      const response = await api.put('profile', data);
+
+      updateUser(response.data);
 
       Alert.alert(
         'Perfil atualizado',
