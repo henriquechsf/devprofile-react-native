@@ -9,16 +9,38 @@ import {
   UserGreeting,
   UserInfo,
   UserInfoDetail,
+  UserListEmpty,
+  UserListHeader,
   UserName,
   UserWrapper,
 } from './styles';
 
 import avatarDefault from '../../assets/avatar02.png';
 import { useAuth } from '../../context/AuthContext';
-import { Alert } from 'react-native';
+import { Alert, FlatList } from 'react-native';
+import { IUser } from '../../model/user';
+import { api } from '../../services/api';
+import { User } from '../../components/User';
+import { useNavigation } from '@react-navigation/native';
+
+interface ScreenNavigationProp {
+  navigate: (screen: string, params?: unknown) => void;
+}
 
 export const Home = () => {
+  const [users, setUsers] = React.useState<IUser[]>([]);
   const { user, signOut } = useAuth();
+
+  const { navigate } = useNavigation<ScreenNavigationProp>();
+
+  React.useEffect(() => {
+    const loadUsers = async () => {
+      const response = await api.get('users');
+      setUsers(response.data);
+    };
+
+    loadUsers();
+  }, []);
 
   const handleSignOut = () => {
     Alert.alert('Tem certeza?', 'Deseja realmente sair da aplicação?', [
@@ -33,12 +55,20 @@ export const Home = () => {
     ]);
   };
 
+  const handleUserDetails = (userId: string) => {
+    navigate('UserDetails', { userId });
+  };
+
+  const handleUserProfile = () => {
+    navigate('UserProfile');
+  };
+
   return (
     <Container>
       <Header>
         <UserWrapper>
           <UserInfo>
-            <UserAvatarButton onPress={() => {}}>
+            <UserAvatarButton onPress={handleUserProfile}>
               <UserAvatar
                 source={
                   user.avatar_url ? { uri: user.avatar_url } : avatarDefault
@@ -55,6 +85,19 @@ export const Home = () => {
           </LogoutButton>
         </UserWrapper>
       </Header>
+
+      <FlatList
+        data={users}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <User data={item} onPress={() => handleUserDetails(item.id)} />
+        )}
+        ListHeaderComponent={<UserListHeader>Usuários</UserListHeader>}
+        ListEmptyComponent={
+          <UserListEmpty>Ops! Ainda não há registros.</UserListEmpty>
+        }
+        style={{ padding: 12 }}
+      />
     </Container>
   );
 };
